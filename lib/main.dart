@@ -13,9 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Person Profile App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,git 
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const AboutPersonPage(),
     );
   }
@@ -98,8 +96,19 @@ class _AboutPersonPageState extends State<AboutPersonPage>
       ),
       body: Stack(
         children: [
-          _buildAboutPersonContent(),
-          if (_showDemographics) _buildDemographicsSelection(),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            color: _showDemographics ? Colors.black54 : Colors.transparent,
+            child: _buildAboutPersonContent(),
+          ),
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            right: _showDemographics ? 0 : -MediaQuery.of(context).size.width,
+            top: 0,
+            bottom: 0,
+            width: MediaQuery.of(context).size.width * 0.7,
+            child: _buildDemographicsSelection(),
+          ),
         ],
       ),
     );
@@ -123,22 +132,23 @@ class _AboutPersonPageState extends State<AboutPersonPage>
           const SizedBox(height: 8),
           _isEditingAboutMe
               ? TextField(
-                  controller: _aboutMeController,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                )
-              : Text(_aboutMeController.text.isEmpty
-                  ? 'No description provided.'
-                  : _aboutMeController.text),
+                controller: _aboutMeController,
+                maxLines: 3,
+                decoration: const InputDecoration(border: OutlineInputBorder()),
+              )
+              : Text(
+                _aboutMeController.text.isEmpty
+                    ? 'No description provided.'
+                    : _aboutMeController.text,
+              ),
           const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerRight,
             child: IconButton(
               icon: Icon(
-                  _isEditingAboutMe ? Icons.save : Icons.edit,
-                  color: Colors.blue),
+                _isEditingAboutMe ? Icons.save : Icons.edit,
+                color: Colors.blue,
+              ),
               onPressed: _toggleEditAboutMe,
             ),
           ),
@@ -150,11 +160,10 @@ class _AboutPersonPageState extends State<AboutPersonPage>
           const SizedBox(height: 8),
           Wrap(
             spacing: 8.0,
-            children: _selectedDemographics.map((demographic) {
-              return Chip(
-                label: Text(demographic),
-              );
-            }).toList(),
+            children:
+                _selectedDemographics.map((demographic) {
+                  return Chip(label: Text(demographic));
+                }).toList(),
           ),
         ],
       ),
@@ -162,31 +171,22 @@ class _AboutPersonPageState extends State<AboutPersonPage>
   }
 
   Widget _buildDemographicsSelection() {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(1, 0),
-        end: Offset.zero,
-      ).animate(_animation),
-      child: Container(
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Select Demographics',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              _buildDemographicOption('Gender'),
-              _buildDemographicOption('Age'),
-              _buildDemographicOption('Profession'),
-              _buildDemographicOption('Working Holiday'),
-              _buildDemographicOption('Backpacker'),
-            ],
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Select Demographics',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-        ),
+          const SizedBox(height: 16),
+          _buildDemographicOption('Gender'),
+          _buildDemographicOption('Age'),
+          _buildDemographicOption('Profession'),
+          _buildDemographicOption('Working Holiday'),
+          _buildDemographicOption('Backpacker'),
+        ],
       ),
     );
   }
