@@ -94,6 +94,7 @@ class _AboutPersonPageState extends State<AboutPersonPage>
           ),
         ],
       ),
+      // Check this is appearing in the code
       body: Stack(
         children: [
           AnimatedContainer(
